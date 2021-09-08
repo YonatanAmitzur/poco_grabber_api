@@ -67,8 +67,7 @@ class ModelTests(TestCase):
         """Test creating a new superuser"""
         user = get_user_model().objects.create_superuser(
             'test@poco.com',
-            'test123',
-            name='test'
+            'test123'
         )
 
         self.assertTrue(user.is_superuser)
@@ -89,7 +88,7 @@ class ModelTests(TestCase):
         self.assertEqual(user.name, 'test')
         self.assertTrue(user.check_password(password))
         # default values
-        now_minus_one_minute = datetime.datetime.now() - datetime.timedelta(minutes=1)
+        now_minus_one_minute = datetime.datetime.now() - datetime.timedelta(seconds=30)
         difference_created = datetime.datetime.utcnow() - user.created.replace(tzinfo=None)
         difference_updated = datetime.datetime.utcnow() - user.updated.replace(tzinfo=None)
         self.assertLessEqual(difference_created.microseconds, now_minus_one_minute.microsecond)
