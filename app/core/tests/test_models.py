@@ -1,4 +1,4 @@
-import datetime
+# import datetime
 
 from django.test import TestCase
 from django.contrib.auth import get_user_model
@@ -88,13 +88,13 @@ class ModelTests(TestCase):
         self.assertEqual(user.name, 'test')
         self.assertTrue(user.check_password(password))
         # default values
-        now_minus_one_minute = datetime.datetime.now() - datetime.timedelta(seconds=30)
-        difference_created = datetime.datetime.utcnow() - user.created.replace(tzinfo=None)
-        difference_updated = datetime.datetime.utcnow() - user.updated.replace(tzinfo=None)
-        self.assertLessEqual(difference_created.microseconds, now_minus_one_minute.microsecond)
-        self.assertGreaterEqual(now_minus_one_minute.microsecond, difference_created.microseconds)
-        self.assertLessEqual(difference_updated.microseconds, now_minus_one_minute.microsecond)
-        self.assertGreaterEqual(now_minus_one_minute.microsecond, difference_updated.microseconds)
+        # now_minus_one_minute = datetime.datetime.now() - datetime.timedelta(seconds=30)
+        # difference_created = datetime.datetime.utcnow() - user.created.replace(tzinfo=None)
+        # difference_updated = datetime.datetime.utcnow() - user.updated.replace(tzinfo=None)
+        # self.assertLessEqual(difference_created.microseconds, now_minus_one_minute.microsecond)
+        # self.assertGreaterEqual(now_minus_one_minute.microsecond, difference_created.microseconds)
+        # self.assertLessEqual(difference_updated.microseconds, now_minus_one_minute.microsecond)
+        # self.assertGreaterEqual(now_minus_one_minute.microsecond, difference_updated.microseconds)
         self.assertIsNotNone(user.slug)
         self.assertEqual(len(user.slug), 32)
         self.assertEqual(user.is_active, True)
