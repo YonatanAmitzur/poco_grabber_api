@@ -1,7 +1,6 @@
 import uuid
 from django.db import models
 from django.db.models import PositiveIntegerField
-from django.core.exceptions import ValidationError
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, \
                                         PermissionsMixin
 from core.utils import validators
@@ -98,4 +97,3 @@ class User(AbstractBaseUser, PermissionsMixin):
     client_tier = models.TextField(choices=TIER_CHOICES, null=True, blank=True, default=STANDARD)
 
     objects = UserManager()
-

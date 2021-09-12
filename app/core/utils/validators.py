@@ -82,4 +82,3 @@ rgx_phone_strip_chars = re.compile(
     r'([()\-\.#x+ %s]+)' % unicode_ctrl_chars, re.IGNORECASE)
 
 rgx_bank_name = re.compile(r'(?!^\d+$)^.+$')
-
