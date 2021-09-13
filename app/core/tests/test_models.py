@@ -4,10 +4,10 @@ from django.test import TestCase
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 
-from core.models import User
+from core.models import User, GrabberRun, LooperSettings, SymbolInfo, make_slug
 
 
-def sample_user(email='test@londonappdev.com', password='testpass'):
+def sample_user(email='test@poco.com', password='testpass'):
     """Create a sample user"""
     return get_user_model().objects.create_user(email, password)
 
@@ -103,3 +103,93 @@ class ModelTests(TestCase):
         self.assertEqual(user.is_test, False)
         self.assertEqual(user.client_tier, User.STANDARD)
         self.assertEqual(user.status, User.STATUS_CREATED)
+
+    def test_create_symbol_info(self):
+        symbol_info = SymbolInfo.objects.create(
+            symbol='ETHBTC',
+            status='TRADING',
+            baseAsset='ETH',
+            baseAssetPrecision=8,
+            quoteAsset='BTC',
+            quotePrecision=8,
+            quoteAssetPrecision=8,
+            baseCommissionPrecision=8,
+            quoteCommissionPrecision=8,
+            orderTypes=['LIMIT', 'LIMIT_MAKER', 'MARKET', 'STOP_LOSS_LIMIT', 'TAKE_PROFIT_LIMIT'],
+            icebergAllowed=True,
+            ocoAllowed=True,
+            quoteOrderQtyMarketAllowed=True,
+            isSpotTradingAllowed=True,
+            isMarginTradingAllowed=True,
+            filters=[
+                {'filterType': 'PRICE_FILTER',
+                 'minPrice': '0.00000100',
+                 'maxPrice': '922327.00000000',
+                 'tickSize': '0.00000100'},
+                {'filterType': 'PERCENT_PRICE',
+                 'multiplierUp': '5',
+                 'multiplierDown': '0.2',
+                 'avgPriceMins': 5},
+                {'filterType': 'LOT_SIZE',
+                 'minQty': '0.00100000',
+                 'maxQty': '100000.00000000',
+                 'stepSize': '0.00100000'},
+                {'filterType': 'MIN_NOTIONAL',
+                 'minNotional': '0.00010000',
+                 'applyToMarket': True,
+                 'avgPriceMins': 5},
+                {'filterType': 'ICEBERG_PARTS',
+                 'limit': 10},
+                {'filterType': 'MARKET_LOT_SIZE',
+                 'minQty': '0.00000000',
+                 'maxQty': '1127.04279986',
+                 'stepSize': '0.00000000'},
+                {'filterType': 'MAX_NUM_ORDERS',
+                 'maxNumOrders': 200},
+                {'filterType': 'MAX_NUM_ALGO_ORDERS',
+                 'maxNumAlgoOrders': 5}],
+            permissions=['SPOT', 'MARGIN']
+        )
+
+        self.assertEqual(str(symbol_info), symbol_info.symbol)
+
+    def test_create_looper_settings(self):
+        grabber_run_slug = make_slug()
+        curr_user = get_user_model().objects.create_user(
+            email='test@poco.com',
+            password='testpass',
+            name='test'
+        )
+        grabber_run = GrabberRun.objects.create(
+            slug=grabber_run_slug,
+            user=curr_user
+        )
+        looper_settings = LooperSettings.objects.create(
+            grabber_run_slug=grabber_run.slug,
+            user=curr_user
+        )
+        self.assertEqual(looper_settings.grabber_run_slug, grabber_run.slug)
+        self.assertIsNotNone(looper_settings.slug)
+        self.assertIsNone(looper_settings.run_type)
+        self.assertIsNone(looper_settings.is_running)
+        self.assertIsNotNone(looper_settings.created)
+        self.assertIsNotNone(looper_settings.updated)
+        self.assertEqual(looper_settings.user, curr_user)
+
+    def test_create_grabber_run(self):
+        slug = make_slug()
+        curr_user = get_user_model().objects.create_user(
+            email='test@poco.com',
+            password='testpass',
+            name='test'
+        )
+        grabber_run = GrabberRun.objects.create(
+            slug=slug,
+            user=curr_user
+        )
+
+        self.assertEqual(grabber_run.slug, slug)
+        self.assertIsNotNone(grabber_run.created)
+        self.assertIsNotNone(grabber_run.updated)
+        self.assertEqual(grabber_run.user, curr_user)
+        self.assertEqual(grabber_run.status, GrabberRun.STATUS_CREATED)

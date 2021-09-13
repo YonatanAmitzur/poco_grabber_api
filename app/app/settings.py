@@ -50,6 +50,8 @@ INSTALLED_APPS = [
 
     'core',
     'user',
+    'data_grabber',
+    'exchange',
 ]
 
 MIDDLEWARE = [
