@@ -1,4 +1,6 @@
 from django.test import TestCase
+from django.contrib.auth import get_user_model
+from rest_framework.test import APIClient
 
 from exchange.exchange_actions.actions import ExchangeActions
 from core.models import SymbolInfo
@@ -90,3 +92,17 @@ class ExchangeActionsTests(TestCase):
         symbol_info_list_filter = symbol_info_list.filter(symbol__in=symbols_list)
         self.assertEqual(len(symbol_info_list_filter), len(symbols_list))
         self.assertEqual(len(symbols_info), 2)
+
+    def test_get_account_data(self):
+        """Test get_account_data func"""
+        user = get_user_model().objects.create_user(
+            email='test@poco.com',
+            password='testpass',
+            name='test'
+        )
+
+        exchange_actions = ExchangeActions()
+        account_data = exchange_actions.get_account_data(user=user)
+        self.assertIsNotNone(account_data)
+        self.assertEqual(user, account_data['user'])
+        self.assertGreater(len(account_data['balances']), 0)

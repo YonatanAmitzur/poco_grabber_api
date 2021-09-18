@@ -36,7 +36,7 @@ class Binance:
     KLINE_INTERVALS = ['1m', '3m', '5m', '15m', '30m', '1h',
                        '2h', '4h', '6h', '8h', '12h', '1d', '3d', '1w', '1M']
 
-    def __init__(self, filename=None):
+    def __init__(self, filename='credentials.txt'):
 
         self.base = 'https://api.binance.com'
 
@@ -60,7 +60,7 @@ class Binance:
         if filename is None:
             return
 
-        f = open(filename, "r")
+        f = open(__file__.replace('binance.py', filename), "r")
         contents = []
         if f.mode == 'r':
             contents = f.read().split('\n')
@@ -96,6 +96,14 @@ class Binance:
             data = {'code': '-1', 'url': url, 'msg': e}
         return data
 
+    def sign_request(self, params: dict):
+        ''' Signs the request to the Binance API '''
+
+        query_string = '&'.join(["{}={}".format(d, params[d]) for d in params])
+        signature = hmac.new(self.binance_keys['secret_key'].encode('utf-8'), query_string.encode('utf-8'),
+                             hashlib.sha256)
+        params['signature'] = signature.hexdigest()
+        
     def get_trading_symbols_info(self, quote_assets: list = None, symbol_list: list = None):
         url = self.base + self.endpoints["exchangeInfo"]
         data = self._get(url)
@@ -134,7 +142,7 @@ class Binance:
             'recvWindow': 6000,
             'timestamp': int(round(time.time() * 1000)) + request_delay
         }
-        self.signRequest(params)
+        self.sign_request(params)
 
         return self._get(url, params, self.headers)
 
@@ -202,7 +210,7 @@ class Binance:
         params['recvWindow'] = 5000
         params['timestamp'] = int(round(time.time() * 1000)) + request_delay
 
-        self.signRequest(params)
+        self.sign_request(params)
         url = ''
         if test:
             url = self.base + self.endpoints['testOrder']
@@ -214,7 +222,7 @@ class Binance:
         params['recvWindow'] = 5000
         params['timestamp'] = int(round(time.time() * 1000)) + request_delay
 
-        self.signRequest(params)
+        self.sign_request(params)
         url = ''
         if test:
             url = self.base + self.endpoints['testOrder']
@@ -237,7 +245,7 @@ class Binance:
             params['timeInForce'] = 'GTC'
             params['price'] = Binance.float_to_string(price)
 
-        self.signRequest(params)
+        self.sign_request(params)
 
         url = ''
         if test:
@@ -255,7 +263,7 @@ class Binance:
             'timestamp': int(round(time.time() * 1000)) + request_delay
         }
 
-        self.signRequest(params)
+        self.sign_request(params)
 
         url = self.base + self.endpoints['order']
 
@@ -277,7 +285,7 @@ class Binance:
             'timestamp': int(round(time.time() * 1000)) + request_delay
         }
 
-        self.signRequest(params)
+        self.sign_request(params)
 
         url = self.base + self.endpoints['orderListOco']
 
@@ -298,7 +306,7 @@ class Binance:
             'timestamp': int(round(time.time() * 1000)) + request_delay
         }
 
-        self.signRequest(params)
+        self.sign_request(params)
 
         url = self.base + self.endpoints['allOpenOrders']
 
@@ -310,7 +318,7 @@ class Binance:
             'timestamp': int(round(time.time() * 1000)) + request_delay
         }
 
-        self.signRequest(params)
+        self.sign_request(params)
 
         url = self.base + self.endpoints['allOpenOrders']
 
@@ -323,7 +331,7 @@ class Binance:
             'timestamp': int(round(time.time() * 1000)) + request_delay
         }
 
-        self.signRequest(params)
+        self.sign_request(params)
 
         url = self.base + self.endpoints['orderListOco']
 
@@ -337,7 +345,7 @@ class Binance:
             'timestamp': int(round(time.time() * 1000)) + request_delay
         }
 
-        self.signRequest(params)
+        self.sign_request(params)
 
         url = self.base + self.endpoints['order']
 
@@ -401,7 +409,7 @@ class Binance:
             'timestamp': int(round(time.time() * 1000)) + request_delay
         }
 
-        self.signRequest(params)
+        self.sign_request(params)
 
         url = self.base + self.endpoints['allOrders']
 

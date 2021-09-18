@@ -101,6 +101,30 @@ class User(AbstractBaseUser, PermissionsMixin):
     objects = UserManager()
 
 
+class BinanceAccount(models.Model):
+    slug = models.CharField(max_length=32, unique=False,
+                            default=make_slug, db_index=True)
+    makerCommission = models.IntegerField()
+    takerCommission = models.IntegerField()
+    buyerCommission = models.IntegerField()
+    sellerCommission = models.IntegerField()
+    canTrade = models.BooleanField()
+    canWithdraw = models.BooleanField()
+    canDeposit = models.BooleanField()
+    updateTime = models.BigIntegerField()
+    accountType = models.CharField(max_length=60, null=False, blank=False)
+    balances = ArrayField(models.JSONField(blank=True, null=True, default=dict),
+                          default=list, blank=True)
+    permissions = ArrayField(models.TextField(blank=True, null=True),
+                             default=list, blank=True)
+    url = models.TextField(blank=True, null=True)
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
+    user = models.ForeignKey(User, on_delete=models.DO_NOTHING,
+                             related_name="binance_account_user",
+                             blank=True, null=True, default=None)
+
+
 class SymbolInfo(models.Model):
     slug = models.CharField(max_length=32, unique=False, default=make_slug, db_index=True)
     symbol = models.CharField(max_length=20, null=False, blank=False, unique=True, db_index=True)
