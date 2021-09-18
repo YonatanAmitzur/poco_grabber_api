@@ -96,7 +96,7 @@ class Binance:
             data = {'code': '-1', 'url': url, 'msg': e}
         return data
 
-    def get_trading_symbols(self, quote_assets: list = None):
+    def get_trading_symbols_info(self, quote_assets: list = None, symbol_list: list = None):
         url = self.base + self.endpoints["exchangeInfo"]
         data = self._get(url)
         if data.__contains__('code'):
@@ -105,43 +105,38 @@ class Binance:
         symbols_list = []
         for pair in data['symbols']:
             if pair['status'] == self.STATUS_TRADING:
-                if quote_assets is None or (quote_assets is not None
-                                            and pair['quoteAsset'] in quote_assets):
-                    symbols_list.append(pair['symbol'])
-
-        return symbols_list
-
-    def get_trading_symbols_info(self, quote_assets: list = None):
-        url = self.base + self.endpoints["exchangeInfo"]
-        data = self._get(url)
-        if data.__contains__('code'):
-            return []
-
-        symbols_list = []
-        for pair in data['symbols']:
-            if pair['status'] == self.STATUS_TRADING:
-                if quote_assets is None \
-                        or (quote_assets is not None
-                            and pair['quoteAsset'] in quote_assets):
+                if quote_assets is None and symbol_list is None:
                     symbols_list.append(pair)
+                else:
+                    if (quote_assets is not None and pair['quoteAsset'] in quote_assets) \
+                                or (symbol_list is not None and pair['symbol'] in symbol_list):
+                        symbols_list.append(pair)
 
         return symbols_list
 
-    # DELETE
-    def get_symbol_data_of_symbols(self, symbols: list = None):
-        url = self.base + self.endpoints["exchangeInfo"]
-        data = self._get(url)
-        if data.__contains__('code'):
-            return []
+    def get_symbol_data_by_symbol_list(self, symbols: list = None):
+        return self.get_trading_symbols_info(symbol_list=symbols)
 
-        symbols_list = []
+    def get_symbol_data_by_quote_assets(self, quote_assets: list = None):
+        return self.get_trading_symbols_info(quote_assets=quote_assets)
 
-        for pair in data['symbols']:
-            if pair['status'] == 'TRADING':
-                if symbols is not None and pair['symbol'] in symbols:
-                    symbols_list.append(pair)
-
+    def get_trading_symbols(self, quote_assets: list = None, symbol_list: list = None):
+        symbols_infos = self.get_trading_symbols_info(quote_assets=quote_assets,
+                                                      symbol_list=symbol_list)
+        symbols_list = [*(map(lambda o: o.symbol, symbols_infos))]
         return symbols_list
+
+    # No unit test from here
+    def get_account_data(self) -> dict:
+        url = self.base + self.endpoints["account"]
+
+        params = {
+            'recvWindow': 6000,
+            'timestamp': int(round(time.time() * 1000)) + request_delay
+        }
+        self.signRequest(params)
+
+        return self._get(url, params, self.headers)
 
     def get_symbol_k_lines_extra(self, symbol: str,
                                  interval: str,
@@ -164,17 +159,6 @@ class Binance:
             repeat_rounds = repeat_rounds - 1
 
         return df
-
-    def get_account_data(self) -> dict:
-        url = self.base + self.endpoints["account"]
-
-        params = {
-            'recvWindow': 6000,
-            'timestamp': int(round(time.time() * 1000)) + request_delay
-        }
-        self.signRequest(params)
-
-        return self._get(url, params, self.headers)
 
     def get_24hr_ticker(self, symbol: str):
         url = self.base + self.endpoints['24hrTicker'] + "?symbol=" + symbol

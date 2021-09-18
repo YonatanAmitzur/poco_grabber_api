@@ -1,9 +1,14 @@
+from rest_framework.decorators import action
 from rest_framework import viewsets, mixins
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from rest_framework import status
 
 from core.models import SymbolInfo, GrabberRun, LooperSettings
 from exchange import serializers
+from data_grabber.looper.looper import Looper
+from core.async_actions.async_operations import background
 
 
 class SymbolInfoViewSet(viewsets.GenericViewSet,
@@ -40,6 +45,32 @@ class GrabberRunsViewSet(viewsets.GenericViewSet,
 
     queryset = GrabberRun.objects.all()
     serializer_class = serializers.GrabberRunSerializer
+
+    @action(detail=False, methods=['get'])
+    def start_run(self, request):
+        grabber = GrabberRun(user=request.user)
+        grabber.save()
+        looper_settings = LooperSettings.load()
+        looper_settings.is_running = True
+        looper_settings.grabber_run_slug = grabber.slug
+        looper_settings.run_type = LooperSettings.RUN_TYPE_UPDATE_SYMBOLS_ONLY
+        looper_settings.save()
+        self.start_looper(grabber)
+        return Response(data={}, status=status.HTTP_200_OK)
+
+    @action(detail=False, methods=['get'])
+    def stop_run(self, request):
+        looper_settings = LooperSettings.load()
+        looper_settings.is_running = False
+        looper_settings.grabber_run_slug = None
+        looper_settings.run_type = None
+        looper_settings.save()
+        return Response(data={}, status=status.HTTP_200_OK)
+
+    @background
+    def start_looper(self, grabber):
+        looper = Looper(grabber)
+        looper.run()
 
     def get_queryset(self):
         """Return objects for the current authenticated user only"""
