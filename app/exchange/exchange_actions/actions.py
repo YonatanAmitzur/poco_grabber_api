@@ -1,6 +1,6 @@
-from django.core.exceptions import PermissionDenied
+from exchange.binance_source.python_binance.client import Client
+from exchange.binance_source.python_binance.enums_ext import STATUS_TRADING
 
-from exchange.binance_source.binance import Binance
 from exchange.exchange_exceptions.exceptions import DuplicatedSymbolException, \
     BinanceException, MoreThanOneBinanceAccountException
 from core.models import SymbolInfo, BinanceAccount
@@ -9,56 +9,84 @@ from exchange.serializers import SymbolInfoSerializer, BinanceAccountSerializer
 
 class ExchangeActions:
 
-    def __init__(self):
-        self.exchange = Binance()
+    def __init__(self, filename='credentials.txt'):
 
-    def get_trading_symbols_info(self,
-                                 quote_assets: list = None,
-                                 symbol_list: list = None):
+        if filename is None:
+            return
+
+        f = open(__file__.replace('exchange_actions/actions.py', 'binance_source/' + filename),
+                 "r")
+        contents = []
+        if f.mode == 'r':
+            contents = f.read().split('\n')
+
+        api_key = contents[0]
+        secret_key = contents[1]
+
+        self.client = Client(api_key, secret_key)
+
+    def get_trading_symbols_info_raw(self,
+                                     quote_assets: list = [],
+                                     symbol_list: list = []):
         symbols = []
         try:
-            results = self.exchange.get_trading_symbols_info(quote_assets=quote_assets,
-                                                             symbol_list=symbol_list)
+            exchange_info = self.client.get_exchange_info()
+
+            if len(symbol_list) == 0 and len(quote_assets) == 0:
+                for item in exchange_info['symbols']:
+                    if item['status'] == STATUS_TRADING:
+                        symbols.append(item)
+
+            if len(symbol_list) > 0 or len(quote_assets) > 0:
+                for item in exchange_info['symbols']:
+                    if item['status'] == STATUS_TRADING and \
+                            (item['symbol'] in symbol_list or item['quoteAsset'] in quote_assets):
+                        symbols.append(item)
         except Exception as ex:
             raise BinanceException(message=ex)
 
-        for item in results:
-            serializer = SymbolInfoSerializer(data=item)
-            serializer.is_valid()
-            symbols.append(serializer.validated_data)
         return symbols
 
+    def get_trading_symbols_info(self,
+                                 quote_assets: list = [],
+                                 symbol_list: list = []):
+        results = []
+        symbols = self.get_trading_symbols_info_raw(quote_assets=quote_assets,
+                                                    symbol_list=symbol_list)
+        for item in symbols:
+            serializer = SymbolInfoSerializer(data=item)
+            serializer.is_valid()
+            results.append(serializer.validated_data)
+
+        return results
+
     def update_trading_symbols_info(self,
-                                    quote_assets: list = None,
-                                    symbol_list: list = None):
-        symbols = []
+                                    quote_assets: list = [],
+                                    symbol_list: list = []):
+        results_symbols = []
+        symbols = self.get_trading_symbols_info_raw(quote_assets=quote_assets,
+                                                    symbol_list=symbol_list)
 
-        try:
-            results = self.exchange.get_trading_symbols_info(quote_assets=quote_assets,
-                                                             symbol_list=symbol_list)
-        except Exception as ex:
-            raise BinanceException(message=ex)
-
-        for item in results:
+        for item in symbols:
             serializer = SymbolInfoSerializer(data=item)
             serializer.is_valid()
 
             symbol = item['symbol']
-            symbols.append(symbol)
-            symbol_infos = SymbolInfo.objects.filter(symbol=symbol)
-            if len(symbol_infos) == 0:
+            results_symbols.append(symbol)
+            symbols_info = SymbolInfo.objects.filter(symbol=symbol)
+            if len(symbols_info) == 0:
                 serializer.save()
             else:
-                if len(symbol_infos) > 1:
+                if len(symbols_info) > 1:
                     raise DuplicatedSymbolException(message=symbol)
 
-                symbol_info = symbol_infos[0]
+                symbol_info = symbols_info[0]
                 serializer.update(symbol_info, serializer.validated_data)
-        return SymbolInfo.objects.filter(symbol__in=symbols)
+        return SymbolInfo.objects.filter(symbol__in=results_symbols)
 
     def get_account_data(self, user):
         try:
-            account_data = self.exchange.get_account_data()
+            account_data = self.client.get_account()
         except Exception as ex:
             raise BinanceException(message=ex)
 
@@ -69,7 +97,7 @@ class ExchangeActions:
 
     def update_account_data(self, user):
         try:
-            account_data = self.exchange.get_account_data()
+            account_data = self.client.get_account()
         except Exception as ex:
             raise BinanceException(message=ex)
 

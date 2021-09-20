@@ -1,0 +1,2 @@
+python-binance v1.0.14
+https://github.com/sammchardy/python-binance

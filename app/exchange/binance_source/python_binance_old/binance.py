@@ -100,10 +100,11 @@ class Binance:
         ''' Signs the request to the Binance API '''
 
         query_string = '&'.join(["{}={}".format(d, params[d]) for d in params])
-        signature = hmac.new(self.binance_keys['secret_key'].encode('utf-8'), query_string.encode('utf-8'),
-                             hashlib.sha256)
+        signature = \
+            hmac.new(self.binance_keys['secret_key'].encode('utf-8'), query_string.encode('utf-8'),
+                     hashlib.sha256)
         params['signature'] = signature.hexdigest()
-        
+
     def get_trading_symbols_info(self, quote_assets: list = None, symbol_list: list = None):
         url = self.base + self.endpoints["exchangeInfo"]
         data = self._get(url)
@@ -422,13 +423,6 @@ class Binance:
             data = {'code': '-1', 'msg': e}
 
         return json.loads(data)
-
-    def sign_request(self, params: dict):
-        query_string = '&'.join(["{}={}".format(d, params[d]) for d in params])
-        signature = hmac.new(self.binance_keys['secret_key'].encode('utf-8'),
-                             query_string.encode('utf-8'),
-                             hashlib.sha256)
-        params['signature'] = signature.hexdigest()
 
     @classmethod
     def float_to_string(cls, f: float):

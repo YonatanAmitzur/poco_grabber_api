@@ -7,5 +7,9 @@ Pillow>=8.3.2,<8.3.3
 requests
 pandas
 
+aiohttp
+dateparser
+websockets
+
 flake8>=3.6.0<3.7.0
 ipdb==0.13.7

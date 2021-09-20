@@ -13,8 +13,8 @@ from core.async_actions.async_operations import background
 
 
 class BinanceAccountViewSet(viewsets.GenericViewSet,
-                        mixins.ListModelMixin,
-                        mixins.CreateModelMixin):
+                            mixins.ListModelMixin,
+                            mixins.CreateModelMixin):
     """Manage binance account from the database"""
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)

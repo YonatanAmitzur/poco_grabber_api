@@ -35,7 +35,5 @@ class BinanceAccountSerializer(serializers.ModelSerializer):
         read_only_fields = ('slug',)
 
         def create(self, validated_data):
-            import ipdb;ipdb.set_trace()
             validated_data['user'] = self.context['request'].user
             return super(BinanceAccountSerializer, self).create(validated_data)
-

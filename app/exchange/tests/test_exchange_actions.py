@@ -1,6 +1,5 @@
 from django.test import TestCase
 from django.contrib.auth import get_user_model
-from rest_framework.test import APIClient
 
 from exchange.exchange_actions.actions import ExchangeActions
 from core.models import SymbolInfo
@@ -103,6 +102,7 @@ class ExchangeActionsTests(TestCase):
 
         exchange_actions = ExchangeActions()
         account_data = exchange_actions.get_account_data(user=user)
+
         self.assertIsNotNone(account_data)
         self.assertEqual(user, account_data['user'])
         self.assertGreater(len(account_data['balances']), 0)
