@@ -5,10 +5,35 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
 
-from core.models import SymbolInfo, GrabberRun, LooperSettings
+from core.models import SymbolInfo, GrabberRun,\
+    LooperSettings, BinanceAccount
 from exchange import serializers
 from data_grabber.looper.looper import Looper
 from core.async_actions.async_operations import background
+
+
+class BinanceAccountViewSet(viewsets.GenericViewSet,
+                        mixins.ListModelMixin,
+                        mixins.CreateModelMixin):
+    """Manage binance account from the database"""
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
+
+    queryset = BinanceAccount.objects.all()
+    serializer_class = serializers.BinanceAccountSerializer
+
+    def get_queryset(self):
+        """Return objects for the current authenticated user only"""
+        slug = self.request.user.slug
+        queryset = self.queryset
+        if slug is not None:
+            queryset = queryset.filter(user__slug=slug)
+
+        return queryset
+
+    def perform_create(self, serializer):
+        """Create a new object"""
+        serializer.save(user=self.request.user)
 
 
 class SymbolInfoViewSet(viewsets.GenericViewSet,

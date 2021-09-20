@@ -9,6 +9,7 @@ router = DefaultRouter()
 router.register('symbol_info', views.SymbolInfoViewSet)
 router.register('looper_settings', views.LooperSettingsViewSet)
 router.register('grabber_run', views.GrabberRunsViewSet)
+router.register('binance_account', views.BinanceAccountViewSet)
 
 
 app_name = 'data_grabber'
