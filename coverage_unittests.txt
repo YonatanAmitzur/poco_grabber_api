@@ -1,0 +1,69 @@
+TOTAL = 58
+
+poco_common => total = 23
+
+----poco_common.core.tests.test_admin = 3----
+----------------------------------------
+
+----poco_common.core.tests.test_commands = 2----
+----------------------------------------
+
+----poco_common.core.tests.test_models = 11----
+----------------------------------------
+
+----poco_common.exchange.tests.test_exchange_actions = 7----
+----------------------------------------
+
+poco_grabber_api => total = 35
+
+----poco_grabber_api.data_grabber.tests.test_symbol_info = 5----
+test_create_symbol_info_invalid (data_grabber.tests.test_symbol_info.PrivateSymbolInfoApiTests)
+test_create_symbol_info_successful (data_grabber.tests.test_symbol_info.PrivateSymbolInfoApiTests)
+test_retrieve_symbol_Info (data_grabber.tests.test_symbol_info.PrivateSymbolInfoApiTests)
+test_retrieve_symbol_Info_by_symbol (data_grabber.tests.test_symbol_info.PrivateSymbolInfoApiTests)
+test_login_required (data_grabber.tests.test_symbol_info.PublicSymbolInfoApiTests)
+----------------------------------------
+
+
+----poco_grabber_api.data_grabber.tests.test_looper_settings = 9----
+test_create_looper_settings_invalid (data_grabber.tests.test_looper_settings.PrivateLooperSettingsApiTests)
+test_create_looper_settings_successful (data_grabber.tests.test_looper_settings.PrivateLooperSettingsApiTests)
+test_looper_settings_limited_to_user (data_grabber.tests.test_looper_settings.PrivateLooperSettingsApiTests)
+test_retrieve_looper_settings (data_grabber.tests.test_looper_settings.PrivateLooperSettingsApiTests)
+test_retrieve_looper_settings_by_is_running (data_grabber.tests.test_looper_settings.PrivateLooperSettingsApiTests)
+test_retrieve_looper_settings_by_run_type (data_grabber.tests.test_looper_settings.PrivateLooperSettingsApiTests)
+test_retrieve_looper_settings_by_run_type_and_is_running (data_grabber.tests.test_looper_settings.PrivateLooperSettingsApiTests)
+test_retrieve_looper_settings_works_as_singleton (data_grabber.tests.test_looper_settings.PrivateLooperSettingsApiTests)
+test_login_required (data_grabber.tests.test_looper_settings.PublicLooperSettingsApiTests)
+----------------------------------------
+
+----poco_grabber_api.data_grabber.tests.test_grabber_runs = 6----
+test_create_grabber_run_invalid (data_grabber.tests.test_grabber_runs.PrivateGrabberRunApiTests)
+test_create_grabber_run_successful (data_grabber.tests.test_grabber_runs.PrivateGrabberRunApiTests)
+test_grabber_run_limited_to_user (data_grabber.tests.test_grabber_runs.PrivateGrabberRunApiTests)
+test_retrieve_grabber_run (data_grabber.tests.test_grabber_runs.PrivateGrabberRunApiTests)
+test_retrieve_grabber_run_by_status (data_grabber.tests.test_grabber_runs.PrivateGrabberRunApiTests)
+test_login_required (data_grabber.tests.test_grabber_runs.PublicGrabberRunApiTests)
+----------------------------------------
+
+
+----poco_grabber_api.data_grabber.tests.test_binance_account = 4----
+test_create_binance_account_invalid (data_grabber.tests.test_binance_account.PrivateBinanceAccountApiTests)
+test_create_binance_account_successful (data_grabber.tests.test_binance_account.PrivateBinanceAccountApiTests)
+test_retrieve_binance_account (data_grabber.tests.test_binance_account.PrivateBinanceAccountApiTests)
+test_login_required (data_grabber.tests.test_binance_account.PublicBinanceAccountApiTests)
+----------------------------------------
+
+----poco_grabber_api.user.tests = 11----
+test_post_me_not_allowed (user.tests.tests_user_api.PrivateUserApiTests)
+test_retrieve_profile_success (user.tests.tests_user_api.PrivateUserApiTests)
+test_update_user_profile (user.tests.tests_user_api.PrivateUserApiTests)
+test_create_token_for_user (user.tests.tests_user_api.PublicUserApiTests)
+test_create_token_invalid_credentials (user.tests.tests_user_api.PublicUserApiTests)
+test_create_token_missing_field (user.tests.tests_user_api.PublicUserApiTests)
+test_create_token_no_user (user.tests.tests_user_api.PublicUserApiTests)
+test_create_valid_user_success (user.tests.tests_user_api.PublicUserApiTests)
+test_password_too_short (user.tests.tests_user_api.PublicUserApiTests)
+test_retrieve_user_unauthorized (user.tests.tests_user_api.PublicUserApiTests)
+test_user_exists (user.tests.tests_user_api.PublicUserApiTests)
+----------------------------------------

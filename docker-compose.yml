@@ -1,13 +1,14 @@
 version: "3"
 
 services:
-  app:
+  poco_grabber_api:
     build:
       context: .
     ports:
       - "8000:8000"
     volumes:
-      - ./app:/app
+      - ./poco_grabber_api:/poco_grabber_api
+      - ./poco_common:/py-packages/poco_common
     command: >
       sh -c "python manage.py wait_for_db &&
              python manage.py migrate &&
@@ -19,6 +20,7 @@ services:
       - DB_PASS=supersecretpassword
     depends_on:
       - db
+      - redis
 
   db:
     image: postgres:10-alpine
@@ -26,3 +28,11 @@ services:
       - POSTGRES_DB=app
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=supersecretpassword
+
+  redis:
+    image: redis
+    volumes:
+      - ./data:/data
+    ports:
+      - 6397:6379
+
