@@ -13,3 +13,4 @@ websockets
 
 flake8>=3.6.0<3.7.0
 ipdb==0.13.7
+django-redis==4.12.1

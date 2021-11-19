@@ -66,6 +66,27 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'app.urls'
 
+# CACHE CONFIGURATION
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+    }, 'memory': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+    }, 'redis': {
+        'BACKEND': 'django_redis.cache.RedisCache',
+        'LOCATION': 'redis://192.168.48.3:6379/poco_grabber_cache',
+        'OPTIONS': {
+            'PASSWORD': '123456',
+            'SOCKET_CONNECT_TIMEOUT': 3,
+            'SOCKET_TIMEOUT': 3,
+            'CONNECTION_POOL_KWARGS': {'max_connections': 10},
+        },
+    }
+}
+
+SESSION_ENGINE = "django.contrib.sessions.backends.cache"
+SESSION_CACHE_ALIAS = "redis"
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
