@@ -60,6 +60,15 @@ class User(AbstractBaseUser, PermissionsMixin):
         (STANDARD, 'standard'),
     )
 
+    USER_TYPE_GRABBER = 'GRABBER'
+    USER_TYPE_TRADER = 'TRADER'
+    USER_TYPE_GRABBER_AND_TRADER = 'GRABBER_AND_TRADER'
+    USER_TYPE_CHOICES = (
+        (USER_TYPE_GRABBER, 'GRABBER'),
+        (USER_TYPE_TRADER, 'TRADER'),
+        (USER_TYPE_GRABBER_AND_TRADER, 'GRABBER_AND_TRADER'),
+    )
+
     STATUS_ACTIVE = 'ACTIVE'
     STATUS_APPLIED = 'APPLIED'
     STATUS_APPROVED = 'APPROVED'
@@ -98,6 +107,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     status = models.TextField(null=True, blank=True, choices=STATUS_CHOICES, default='CREATED')
+    user_type = models.TextField(null=True, blank=True, choices=USER_TYPE_CHOICES, default=None)
     is_test = models.BooleanField(default=False, db_index=True)
     client_tier = models.TextField(choices=TIER_CHOICES, null=True, blank=True, default=STANDARD)
 
