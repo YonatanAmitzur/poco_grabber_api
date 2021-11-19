@@ -4,7 +4,7 @@ from django.test import TestCase
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 
-from poco_common.core.models import User, GrabberRun, GrabberSettings, SymbolInfo, \
+from poco_common.core.models import User, GrabberSettings, SymbolInfo, \
     BinanceAccount, make_slug
 
 
@@ -176,24 +176,6 @@ class ModelTests(TestCase):
         self.assertIsNotNone(grabber_settings.created)
         self.assertIsNotNone(grabber_settings.updated)
         self.assertEqual(grabber_settings.user, curr_user)
-
-    def test_create_grabber_run(self):
-        slug = make_slug()
-        curr_user = get_user_model().objects.create_user(
-            email='test@poco.com',
-            password='testpass',
-            name='test'
-        )
-        grabber_run = GrabberRun.objects.create(
-            slug=slug,
-            user=curr_user
-        )
-
-        self.assertEqual(grabber_run.slug, slug)
-        self.assertIsNotNone(grabber_run.created)
-        self.assertIsNotNone(grabber_run.updated)
-        self.assertEqual(grabber_run.user, curr_user)
-        self.assertEqual(grabber_run.status, GrabberRun.STATUS_CREATED)
 
     def test_create_binance_account(self):
         slug = make_slug()

@@ -8,7 +8,6 @@ from data_grabber import views
 router = DefaultRouter()
 router.register('symbol_info', views.SymbolInfoViewSet)
 router.register('grabber_settings', views.GrabberSettingsViewSet)
-router.register('grabber_run', views.GrabberRunsViewSet)
 router.register('binance_account', views.BinanceAccountViewSet)
 
 

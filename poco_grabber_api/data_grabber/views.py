@@ -2,8 +2,7 @@ from rest_framework import viewsets, mixins
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 
-from poco_common.core.models import SymbolInfo, GrabberRun,\
-    GrabberSettings, BinanceAccount
+from poco_common.core.models import SymbolInfo, GrabberSettings, BinanceAccount
 from poco_common.exchange import serializers
 
 
@@ -53,34 +52,6 @@ class SymbolInfoViewSet(viewsets.GenericViewSet,
     def perform_create(self, serializer):
         """Create a new object"""
         serializer.save()
-
-
-class GrabberRunsViewSet(viewsets.GenericViewSet,
-                         mixins.ListModelMixin,
-                         mixins.UpdateModelMixin,
-                         mixins.CreateModelMixin):
-    """Manage grabber runs in the database"""
-    authentication_classes = (TokenAuthentication,)
-    permission_classes = (IsAuthenticated,)
-
-    queryset = GrabberRun.objects.all()
-    serializer_class = serializers.GrabberRunSerializer
-
-    def get_queryset(self):
-        """Return objects for the current authenticated user only"""
-        requested_status = self.request.query_params.get('status', None)
-        queryset = self.queryset
-        statuses_dict = {value: key for key, value in GrabberRun.STATUS_CHOICES}
-        if requested_status is not None and requested_status in statuses_dict.keys():
-            queryset = queryset.filter(status=requested_status)
-
-        return queryset.filter(
-            user=self.request.user
-        ).order_by('-updated').distinct()
-
-    def perform_create(self, serializer):
-        """Create a new object"""
-        serializer.save(user=self.request.user)
 
 
 class GrabberSettingsViewSet(viewsets.GenericViewSet,

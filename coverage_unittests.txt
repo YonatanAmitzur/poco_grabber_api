@@ -1,6 +1,6 @@
 TOTAL = 58
 
-poco_common => total = 23
+poco_common => total = 22
 
 ----poco_common.core.tests.test_admin = 3----
 ----------------------------------------
@@ -8,13 +8,13 @@ poco_common => total = 23
 ----poco_common.core.tests.test_commands = 2----
 ----------------------------------------
 
-----poco_common.core.tests.test_models = 11----
+----poco_common.core.tests.test_models = 10----
 ----------------------------------------
 
 ----poco_common.exchange.tests.test_exchange_actions = 7----
 ----------------------------------------
 
-poco_grabber_api => total = 32
+poco_grabber_api => total = 26
 
 ----poco_grabber_api.data_grabber.tests.test_symbol_info = 5----
 test_create_symbol_info_invalid (data_grabber.tests.test_symbol_info.PrivateSymbolInfoApiTests)
@@ -31,15 +31,6 @@ test_create_grabber_settings_invalid (data_grabber.tests.test_grabber_settings.P
 test_retrieve_grabber_settings (data_grabber.tests.test_grabber_settings.PrivateGrabberSettingsApiTests)
 test_retrieve_grabber_settings_works_as_singleton (data_grabber.tests.test_grabber_settings.PrivateGrabberSettingsApiTests)
 test_update_grabber_settings (data_grabber.tests.test_grabber_settings.PrivateGrabberSettingsApiTests)test_login_required (data_grabber.tests.test_looper_settings.PublicLooperSettingsApiTests)
-----------------------------------------
-
-----poco_grabber_api.data_grabber.tests.test_grabber_runs = 6----
-test_create_grabber_run_invalid (data_grabber.tests.test_grabber_runs.PrivateGrabberRunApiTests)
-test_create_grabber_run_successful (data_grabber.tests.test_grabber_runs.PrivateGrabberRunApiTests)
-test_grabber_run_limited_to_user (data_grabber.tests.test_grabber_runs.PrivateGrabberRunApiTests)
-test_retrieve_grabber_run (data_grabber.tests.test_grabber_runs.PrivateGrabberRunApiTests)
-test_retrieve_grabber_run_by_status (data_grabber.tests.test_grabber_runs.PrivateGrabberRunApiTests)
-test_login_required (data_grabber.tests.test_grabber_runs.PublicGrabberRunApiTests)
 ----------------------------------------
 
 

@@ -1,14 +1,5 @@
 from rest_framework import serializers
-from poco_common.core.models import SymbolInfo, GrabberRun, \
-    GrabberSettings, BinanceAccount
-
-
-class GrabberRunSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = GrabberRun
-        fields = '__all__'
-        read_only_fields = ('slug',)
+from poco_common.core.models import SymbolInfo, GrabberSettings, BinanceAccount
 
 
 class GrabberSettingsSerializer(serializers.ModelSerializer):

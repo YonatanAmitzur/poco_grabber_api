@@ -153,29 +153,6 @@ class SymbolInfo(models.Model):
         return self.symbol
 
 
-class GrabberRun(models.Model):
-    STATUS_ACTIVE = 'ACTIVE'
-    STATUS_CANCELED = 'CANCELED'
-    STATUS_CREATED = 'CREATED'
-    STATUS_INACTIVE = 'INACTIVE'
-    STATUS_REJECTED = 'REJECTED'
-    STATUS_SUSPENDED = 'SUSPENDED'
-    STATUS_CHOICES = (
-        (STATUS_ACTIVE, 'ACTIVE'),
-        (STATUS_CANCELED, 'CANCELED'),
-        (STATUS_CREATED, 'CREATED'),
-        (STATUS_INACTIVE, 'INACTIVE'),
-        (STATUS_REJECTED, 'REJECTED'),
-        (STATUS_SUSPENDED, 'SUSPENDED'),
-    )
-
-    slug = models.CharField(max_length=32, unique=False, default=make_slug, db_index=True)
-    created = models.DateTimeField(auto_now_add=True)
-    updated = models.DateTimeField(auto_now=True)
-    status = models.TextField(null=True, blank=True, choices=STATUS_CHOICES, default='CREATED')
-    user = models.ForeignKey(User, on_delete=models.DO_NOTHING, related_name="grabber_runs")
-
-
 class SingletonModel(models.Model):
 
     class Meta:

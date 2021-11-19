@@ -26,6 +26,5 @@ class UserAdmin(BaseUserAdmin):
 
 
 admin.site.register(models.User, UserAdmin)
-admin.site.register(models.GrabberRun)
 admin.site.register(models.SymbolInfo)
 admin.site.register(models.GrabberSettings)
