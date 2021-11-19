@@ -4,7 +4,7 @@ from django.test import TestCase
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 
-from poco_common.core.models import User, GrabberRun, LooperSettings, SymbolInfo, \
+from poco_common.core.models import User, GrabberRun, GrabberSettings, SymbolInfo, \
     BinanceAccount, make_slug
 
 
@@ -154,28 +154,28 @@ class ModelTests(TestCase):
 
         self.assertEqual(str(symbol_info), symbol_info.symbol)
 
-    def test_create_looper_settings(self):
-        grabber_run_slug = make_slug()
+    def test_create_grabber_settings(self):
+        account_key = make_slug()
         curr_user = get_user_model().objects.create_user(
             email='test@poco.com',
             password='testpass',
             name='test'
         )
-        grabber_run = GrabberRun.objects.create(
-            slug=grabber_run_slug,
-            user=curr_user
+        grabber_settings = GrabberSettings.objects.create(
+            user=curr_user,
+            symbols=['BTCBNB', 'BTCADA'],
+            account_keys=[account_key],
+            state=GrabberSettings.STATE_INACTIVE
+
         )
-        looper_settings = LooperSettings.objects.create(
-            grabber_run_slug=grabber_run.slug,
-            user=curr_user
-        )
-        self.assertEqual(looper_settings.grabber_run_slug, grabber_run.slug)
-        self.assertIsNotNone(looper_settings.slug)
-        self.assertIsNone(looper_settings.run_type)
-        self.assertIsNone(looper_settings.is_running)
-        self.assertIsNotNone(looper_settings.created)
-        self.assertIsNotNone(looper_settings.updated)
-        self.assertEqual(looper_settings.user, curr_user)
+        self.assertIsNotNone(grabber_settings.slug)
+        self.assertEqual(grabber_settings.state, GrabberSettings.STATE_INACTIVE)
+        self.assertFalse(grabber_settings.is_running)
+        self.assertListEqual(grabber_settings.symbols, ['BTCBNB', 'BTCADA'])
+        self.assertListEqual(grabber_settings.account_keys, [account_key])
+        self.assertIsNotNone(grabber_settings.created)
+        self.assertIsNotNone(grabber_settings.updated)
+        self.assertEqual(grabber_settings.user, curr_user)
 
     def test_create_grabber_run(self):
         slug = make_slug()

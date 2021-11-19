@@ -202,29 +202,21 @@ class SingletonModel(models.Model):
         return cache.get(cls.__name__)
 
 
-class LooperSettings(SingletonModel):
-    RUN_TYPE_UPDATE_SYMBOLS_ONLY = 'UPDATE_SYMBOLS_ONLY'
-    RUN_TYPE_UPDATE_BALANCES_ONLY = 'UPDATE_BALANCES_ONLY'
-    RUN_TYPE_UPDATE_PAIRS_ONLY = 'UPDATE_PAIRS_ONLY'
-    RUN_TYPE_UPDATE_SYMBOLS_AND_BALANCES_AND_PAIRS = 'UPDATE_SYMBOLS_AND_BALANCES_AND_PAIRS'
-    RUN_TYPE_UPDATE_SYMBOLS_AND_BALANCES = 'UPDATE_SYMBOLS_AND_BALANCES'
-    RUN_TYPE_UPDATE_BALANCES_AND_PAIRS = 'UPDATE_BALANCES_AND_PAIRS'
-    RUN_TYPE_UPDATE_SYMBOLS_AND_PAIRS = 'UPDATE_SYMBOLS_AND_PAIRS'
-    RUN_TYPE_CHOICES = (
-        (RUN_TYPE_UPDATE_SYMBOLS_ONLY, 'UPDATE_SYMBOLS_ONLY'),
-        (RUN_TYPE_UPDATE_BALANCES_ONLY, 'UPDATE_BALANCES_ONLY'),
-        (RUN_TYPE_UPDATE_PAIRS_ONLY, 'UPDATE_PAIRS_ONLY'),
-        (RUN_TYPE_UPDATE_SYMBOLS_AND_BALANCES_AND_PAIRS, 'UPDATE_SYMBOLS_AND_BALANCES_AND_PAIRS'),
-        (RUN_TYPE_UPDATE_SYMBOLS_AND_BALANCES, 'UPDATE_SYMBOLS_AND_BALANCES'),
-        (RUN_TYPE_UPDATE_BALANCES_AND_PAIRS, 'UPDATE_BALANCES_AND_PAIRS'),
-        (RUN_TYPE_UPDATE_SYMBOLS_AND_PAIRS, 'UPDATE_SYMBOLS_AND_PAIRS'),
-
+class GrabberSettings(SingletonModel):
+    STATE_ACTIVE = 'ACTIVE'
+    STATE_INACTIVE = 'INACTIVE'
+    STATE_SUSPENDED = 'SUSPENDED'
+    STATE_CHOICES = (
+        (STATE_ACTIVE, 'ACTIVE'),
+        (STATE_INACTIVE, 'INACTIVE'),
+        (STATE_SUSPENDED, 'SUSPENDED'),
     )
 
     slug = models.CharField(max_length=32, unique=False, default=make_slug)
-    is_running = models.BooleanField(default=None, blank=True, null=True)
-    grabber_run_slug = models.CharField(max_length=32, default=None,  blank=True, null=True)
-    run_type = models.TextField(null=True, blank=True, choices=RUN_TYPE_CHOICES, default=None)
+    is_running = models.BooleanField(default=False, null=False)
+    symbols = ArrayField(models.TextField(blank=True, null=True), default=list, blank=True)
+    account_keys = ArrayField(models.TextField(blank=True, null=True), default=list, blank=True)
+    state = models.TextField(null=True, blank=True, choices=STATE_CHOICES, default=None)
+    user = models.ForeignKey(User, on_delete=models.DO_NOTHING, related_name="grabber_settings_user")
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
-    user = models.ForeignKey(User, on_delete=models.DO_NOTHING, related_name="looper_settings_user")

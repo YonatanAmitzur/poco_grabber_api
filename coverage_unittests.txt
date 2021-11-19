@@ -14,7 +14,7 @@ poco_common => total = 23
 ----poco_common.exchange.tests.test_exchange_actions = 7----
 ----------------------------------------
 
-poco_grabber_api => total = 35
+poco_grabber_api => total = 32
 
 ----poco_grabber_api.data_grabber.tests.test_symbol_info = 5----
 test_create_symbol_info_invalid (data_grabber.tests.test_symbol_info.PrivateSymbolInfoApiTests)
@@ -25,16 +25,12 @@ test_login_required (data_grabber.tests.test_symbol_info.PublicSymbolInfoApiTest
 ----------------------------------------
 
 
-----poco_grabber_api.data_grabber.tests.test_looper_settings = 9----
-test_create_looper_settings_invalid (data_grabber.tests.test_looper_settings.PrivateLooperSettingsApiTests)
-test_create_looper_settings_successful (data_grabber.tests.test_looper_settings.PrivateLooperSettingsApiTests)
-test_looper_settings_limited_to_user (data_grabber.tests.test_looper_settings.PrivateLooperSettingsApiTests)
-test_retrieve_looper_settings (data_grabber.tests.test_looper_settings.PrivateLooperSettingsApiTests)
-test_retrieve_looper_settings_by_is_running (data_grabber.tests.test_looper_settings.PrivateLooperSettingsApiTests)
-test_retrieve_looper_settings_by_run_type (data_grabber.tests.test_looper_settings.PrivateLooperSettingsApiTests)
-test_retrieve_looper_settings_by_run_type_and_is_running (data_grabber.tests.test_looper_settings.PrivateLooperSettingsApiTests)
-test_retrieve_looper_settings_works_as_singleton (data_grabber.tests.test_looper_settings.PrivateLooperSettingsApiTests)
-test_login_required (data_grabber.tests.test_looper_settings.PublicLooperSettingsApiTests)
+----poco_grabber_api.data_grabber.tests.test_grabber_settings = 6----
+_create_grabber_settings (data_grabber.tests.test_grabber_settings.PrivateGrabberSettingsApiTests)
+test_create_grabber_settings_invalid (data_grabber.tests.test_grabber_settings.PrivateGrabberSettingsApiTests)
+test_retrieve_grabber_settings (data_grabber.tests.test_grabber_settings.PrivateGrabberSettingsApiTests)
+test_retrieve_grabber_settings_works_as_singleton (data_grabber.tests.test_grabber_settings.PrivateGrabberSettingsApiTests)
+test_update_grabber_settings (data_grabber.tests.test_grabber_settings.PrivateGrabberSettingsApiTests)test_login_required (data_grabber.tests.test_looper_settings.PublicLooperSettingsApiTests)
 ----------------------------------------
 
 ----poco_grabber_api.data_grabber.tests.test_grabber_runs = 6----

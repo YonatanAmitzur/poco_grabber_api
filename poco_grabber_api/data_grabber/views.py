@@ -3,7 +3,7 @@ from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 
 from poco_common.core.models import SymbolInfo, GrabberRun,\
-    LooperSettings, BinanceAccount
+    GrabberSettings, BinanceAccount
 from poco_common.exchange import serializers
 
 
@@ -83,29 +83,21 @@ class GrabberRunsViewSet(viewsets.GenericViewSet,
         serializer.save(user=self.request.user)
 
 
-class LooperSettingsViewSet(viewsets.GenericViewSet,
-                            mixins.ListModelMixin,
-                            mixins.UpdateModelMixin,
-                            mixins.CreateModelMixin):
+class GrabberSettingsViewSet(viewsets.GenericViewSet,
+                             mixins.ListModelMixin,
+                             mixins.UpdateModelMixin,
+                             mixins.CreateModelMixin):
     """Manage looper settings in the database"""
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
 
-    queryset = LooperSettings.objects.all()
-    serializer_class = serializers.LooperSettingsSerializer
-
-    def get_queryset(self):
-        """Return objects for the current authenticated user only"""
-        requested_is_running = self.request.query_params.get('is_running', None)
-        requested_run_type = self.request.query_params.get('run_type', None)
-        queryset = self.queryset
-        if requested_is_running is not None:
-            queryset = queryset.filter(is_running=requested_is_running)
-        run_types_dict = {value: key for key, value in LooperSettings.RUN_TYPE_CHOICES}
-        if requested_run_type is not None and requested_run_type in run_types_dict.keys():
-            queryset = queryset.filter(run_type=requested_run_type)
-        return queryset.filter(user=self.request.user).order_by('-updated').distinct()
+    queryset = GrabberSettings.objects.all()
+    serializer_class = serializers.GrabberSettingsSerializer
+    lookup_field = 'slug'
 
     def perform_create(self, serializer):
         """Create a new object"""
+        serializer.save(user=self.request.user)
+
+    def perform_update(self, serializer):
         serializer.save(user=self.request.user)
