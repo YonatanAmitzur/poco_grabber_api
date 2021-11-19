@@ -167,7 +167,6 @@ class ModelTests(TestCase):
             symbols=['BTCBNB', 'BTCADA'],
             account_keys=[account_key],
             state=GrabberSettings.STATE_INACTIVE
-
         )
         self.assertIsNotNone(grabber_settings.slug)
         self.assertEqual(grabber_settings.state, GrabberSettings.STATE_INACTIVE)

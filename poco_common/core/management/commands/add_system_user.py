@@ -10,9 +10,9 @@ from poco_common.core.models import User
 
 class Command(BaseCommand, object):
     """
-    A Django management command to add the BlueVine "system" user if it doesn't already exist.
+    A Django management command to add the PoCo "system" user if it doesn't already exist.
     """
-    help = """A Django management command to add the BlueVine "system" user if it doesn't already exist."""
+    help = """A Django management command to add the PoCo "system" user if it doesn't already exist."""
 
     def handle(self, *args, **options):
         """
