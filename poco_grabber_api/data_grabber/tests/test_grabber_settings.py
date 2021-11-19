@@ -5,7 +5,7 @@ from django.test import TestCase
 from rest_framework import status
 from rest_framework.test import APIClient
 
-from poco_common.core.models import GrabberSettings, make_slug
+from poco_common.core.models import GrabberSettings, GrabberSettingsRecords, make_slug
 from poco_common.exchange.serializers import GrabberSettingsSerializer
 
 
@@ -102,6 +102,23 @@ class PrivateGrabberSettingsApiTests(TestCase):
         self.assertEqual(grabber_setting.account_keys, ['aaaaaaa'])
         self.assertEqual(grabber_setting.symbols, ['btcada', 'btcbnb'])
 
+        grabber_settings_records = GrabberSettingsRecords.objects.all()
+        self.assertEqual(grabber_settings_records.count(), 1)
+        grabber_settings_record = grabber_settings_records[0]
+
+        self.assertEqual(grabber_settings_record.slug, grabber_setting.slug)
+        self.assertEqual(grabber_settings_record.is_running, grabber_setting.is_running)
+        self.assertEqual(grabber_settings_record.symbols, grabber_setting.symbols)
+        self.assertEqual(grabber_settings_record.account_keys, grabber_setting.account_keys)
+        self.assertEqual(grabber_settings_record.state, grabber_setting.state)
+        self.assertEqual(grabber_settings_record.user, grabber_setting.user)
+        self.assertEqual(grabber_settings_record.created, grabber_setting.created)
+        self.assertEqual(grabber_settings_record.updated, grabber_setting.updated)
+        self.assertTrue(grabber_settings_record.is_record_created)
+        self.assertIsNotNone(grabber_settings_record.slug_record)
+        self.assertNotEqual(grabber_settings_record.slug_record, grabber_settings_record.slug)
+        self.assertIsNotNone(grabber_settings_record.created_record)
+
     def test_create_grabber_settings_invalid(self):
         """Test creating a new grabber settings with invalid payload"""
         payload = {
@@ -121,6 +138,7 @@ class PrivateGrabberSettingsApiTests(TestCase):
             state=GrabberSettings.STATE_INACTIVE,
             is_running=False
         )
+        updated = grabber_settings.updated
         payload = {
             'is_running': True,
         }
@@ -130,4 +148,24 @@ class PrivateGrabberSettingsApiTests(TestCase):
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         grabber_settings_res = GrabberSettings.objects.all()
         grabber_setting = grabber_settings_res[0]
+        new_updated = grabber_setting.updated
         self.assertEqual(grabber_setting.is_running, True)
+        self.assertGreater(new_updated, updated)
+
+        grabber_settings_records = GrabberSettingsRecords.objects.all()
+        self.assertEqual(grabber_settings_records.count(), 2)
+        grabber_settings_record = grabber_settings_records.filter(
+            updated=grabber_setting.updated)[0]
+
+        self.assertEqual(grabber_settings_record.slug, grabber_setting.slug)
+        self.assertEqual(grabber_settings_record.is_running, grabber_setting.is_running)
+        self.assertEqual(grabber_settings_record.symbols, grabber_setting.symbols)
+        self.assertEqual(grabber_settings_record.account_keys, grabber_setting.account_keys)
+        self.assertEqual(grabber_settings_record.state, grabber_setting.state)
+        self.assertEqual(grabber_settings_record.user, grabber_setting.user)
+        self.assertEqual(grabber_settings_record.created, grabber_setting.created)
+        self.assertEqual(grabber_settings_record.updated, grabber_setting.updated)
+        self.assertFalse(grabber_settings_record.is_record_created)
+        self.assertIsNotNone(grabber_settings_record.slug_record)
+        self.assertNotEqual(grabber_settings_record.slug_record, grabber_settings_record.slug)
+        self.assertIsNotNone(grabber_settings_record.created_record)

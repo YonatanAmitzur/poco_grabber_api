@@ -5,6 +5,9 @@ from django.db.models import PositiveIntegerField
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, \
                                         PermissionsMixin
 from django.contrib.postgres.fields import ArrayField
+from django.db.models import signals
+from django.dispatch import receiver
+
 from poco_common.core.utils import validators
 
 
@@ -197,3 +200,33 @@ class GrabberSettings(SingletonModel):
     user = models.ForeignKey(User, on_delete=models.DO_NOTHING, related_name="grabber_settings_user")
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
+
+
+class GrabberSettingsRecords(models.Model):
+    STATE_ACTIVE = 'ACTIVE'
+    STATE_INACTIVE = 'INACTIVE'
+    STATE_SUSPENDED = 'SUSPENDED'
+    STATE_CHOICES = (
+        (STATE_ACTIVE, 'ACTIVE'),
+        (STATE_INACTIVE, 'INACTIVE'),
+        (STATE_SUSPENDED, 'SUSPENDED'),
+    )
+
+    slug = models.CharField(max_length=32, unique=False, default=None)
+    is_running = models.BooleanField(default=None, blank=True, null=True)
+    symbols = ArrayField(models.TextField(blank=True, null=True), default=list, blank=True)
+    account_keys = ArrayField(models.TextField(blank=True, null=True), default=list, blank=True)
+    state = models.TextField(null=True, blank=True, choices=STATE_CHOICES, default=None)
+    user = models.ForeignKey(User, on_delete=models.DO_NOTHING, related_name="grabber_settings_record_user")
+    created = models.DateTimeField()
+    updated = models.DateTimeField()
+    is_record_created = models.BooleanField(default=None, blank=True, null=True)
+    slug_record = models.CharField(max_length=32, unique=False, default=make_slug)
+    created_record = models.DateTimeField(auto_now_add=True)
+
+
+@receiver(signals.post_save, sender=GrabberSettings)
+def on_create_or_updated_grabber_settings_record(sender, instance, **kwargs):
+    cloned_grabber_settings = {k: v for k, v in vars(instance).items() if k not in ('id', '_state')}
+    cloned_grabber_settings['is_record_created'] = kwargs['created']
+    GrabberSettingsRecords.objects.create(**dict(cloned_grabber_settings))

@@ -5,7 +5,7 @@ from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 
 from poco_common.core.models import User, GrabberSettings, SymbolInfo, \
-    BinanceAccount, make_slug
+    BinanceAccount, GrabberSettingsRecords, make_slug
 
 
 def sample_user(email='test@poco.com', password='testpass'):
@@ -176,6 +176,23 @@ class ModelTests(TestCase):
         self.assertIsNotNone(grabber_settings.created)
         self.assertIsNotNone(grabber_settings.updated)
         self.assertEqual(grabber_settings.user, curr_user)
+
+        grabber_settings_records = GrabberSettingsRecords.objects.all()
+        self.assertEqual(grabber_settings_records.count(), 1)
+        grabber_settings_record = grabber_settings_records[0]
+
+        self.assertEqual(grabber_settings_record.slug, grabber_settings.slug)
+        self.assertEqual(grabber_settings_record.is_running, grabber_settings.is_running)
+        self.assertEqual(grabber_settings_record.symbols, grabber_settings.symbols)
+        self.assertEqual(grabber_settings_record.account_keys, grabber_settings.account_keys)
+        self.assertEqual(grabber_settings_record.state, grabber_settings.state)
+        self.assertEqual(grabber_settings_record.user, grabber_settings.user)
+        self.assertEqual(grabber_settings_record.created, grabber_settings.created)
+        self.assertEqual(grabber_settings_record.updated, grabber_settings.updated)
+        self.assertTrue(grabber_settings_record.is_record_created)
+        self.assertIsNotNone(grabber_settings_record.slug_record)
+        self.assertNotEqual(grabber_settings_record.slug_record, grabber_settings_record.slug)
+        self.assertIsNotNone(grabber_settings_record.created_record)
 
     def test_create_binance_account(self):
         slug = make_slug()
