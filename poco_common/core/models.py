@@ -240,3 +240,43 @@ def on_create_or_updated_grabber_settings_record(sender, instance, **kwargs):
     cloned_grabber_settings = {k: v for k, v in vars(instance).items() if k not in ('id', '_state')}
     cloned_grabber_settings['is_record_created'] = kwargs['created']
     GrabberSettingsRecords.objects.create(**dict(cloned_grabber_settings))
+
+
+class SymbolEarliestTimestamp(models.Model):
+    slug = models.CharField(max_length=32, unique=False, default=make_slug, db_index=True)
+    symbol = models.CharField(max_length=20, null=False, blank=False, db_index=True)
+    interval = models.CharField(max_length=2, null=False, blank=False, db_index=True)
+    earliest_timestamp = models.BigIntegerField(blank=True, null=True, default=None)
+    earliest_datetime = models.DateTimeField(blank=True, null=True, default=None)
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
+    user = models.ForeignKey(User, on_delete=models.DO_NOTHING, related_name="symbol_earliest_timestamp_user")
+
+
+class BinanceAccountStatus(models.Model):
+    slug = models.CharField(max_length=32, unique=False, default=make_slug, db_index=True)
+    created = models.DateTimeField(auto_now_add=True)
+    user = models.ForeignKey(User, on_delete=models.DO_NOTHING, related_name="binance_account_status_user")
+    status = models.TextField(null=True, blank=True, default=None)
+
+
+class CoinInfo(models.Model):
+    slug = models.CharField(max_length=32, unique=False, default=make_slug, db_index=True)
+    coin = models.CharField(max_length=10, null=False, blank=False, unique=True, db_index=True)
+    depositAllEnable= models.BooleanField()
+    withdrawAllEnable = models.BooleanField()
+    name = models.TextField(blank=True, null=True)
+    free = models.FloatField()
+    locked = models.FloatField()
+    freeze = models.FloatField()
+    withdrawing = models.FloatField()
+    ipoing = models.FloatField()
+    ipoable = models.FloatField()
+    storage = models.FloatField()
+    isLegalMoney = models.BooleanField()
+    trading = models.BooleanField()
+    networkList = ArrayField(models.JSONField(blank=True, null=True, default=dict),
+                             default=list, blank=True)
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
+    user = models.ForeignKey(User, on_delete=models.DO_NOTHING, related_name="coin_info_user")

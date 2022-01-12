@@ -8,13 +8,13 @@ poco_common => total = 22
 ----poco_common.core.tests.test_commands = 2----
 ----------------------------------------
 
-----poco_common.core.tests.test_models = 10----
+----poco_common.core.tests.test_models = 12----
 ----------------------------------------
 
-----poco_common.exchange.tests.test_exchange_actions = 7----
+----poco_common.exchange.tests.test_exchange_actions = 9----
 ----------------------------------------
 
-poco_grabber_api => total = 26
+poco_grabber_api => total = 31
 
 ----poco_grabber_api.data_grabber.tests.test_symbol_info = 5----
 test_create_symbol_info_invalid (data_grabber.tests.test_symbol_info.PrivateSymbolInfoApiTests)
@@ -53,4 +53,14 @@ test_create_valid_user_success (user.tests.tests_user_api.PublicUserApiTests)
 test_password_too_short (user.tests.tests_user_api.PublicUserApiTests)
 test_retrieve_user_unauthorized (user.tests.tests_user_api.PublicUserApiTests)
 test_user_exists (user.tests.tests_user_api.PublicUserApiTests)
+----------------------------------------
+
+
+----poco_grabber_api.data_grabber.tests.test_binance_general_actions = 6----
+test_ping_binance (data_grabber.tests.test_binance_general_actions.PrivateBinanceGeneralActionsApiTests)
+test_ping_binance_fail_return_none (data_grabber.tests.test_binance_general_actions.PrivateBinanceGeneralActionsApiTests)
+test_ping_binance_fail_raise_binance_api_exception (data_grabber.tests.test_binance_general_actions.PrivateBinanceGeneralActionsApiTests)
+test_ping_binance_fail_raise_binance_request_exception (data_grabber.tests.test_binance_general_actions.PrivateBinanceGeneralActionsApiTests)
+test_account_status (data_grabber.tests.test_binance_general_actions.PrivateBinanceGeneralActionsApiTests)
+test_login_required (data_grabber.tests.test_binance_general_actions.PublicBinanceGeneralActionsApiTests)
 ----------------------------------------

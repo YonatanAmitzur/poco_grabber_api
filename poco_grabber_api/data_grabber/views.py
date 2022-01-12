@@ -1,9 +1,15 @@
 from rest_framework import viewsets, mixins
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.decorators import action
+from rest_framework.response import Response
+from rest_framework import status
+from django.shortcuts import get_object_or_404
 
-from poco_common.core.models import SymbolInfo, GrabberSettings, BinanceAccount
+from poco_common.core.models import SymbolInfo, GrabberSettings, BinanceAccount, User
 from poco_common.exchange import serializers
+from poco_common.exchange.exchange_actions.actions import ExchangeActions
+from data_grabber.serializers import BinanceAccountStatusSerializer
 
 
 class BinanceAccountViewSet(viewsets.GenericViewSet,
@@ -72,3 +78,31 @@ class GrabberSettingsViewSet(viewsets.GenericViewSet,
 
     def perform_update(self, serializer):
         serializer.save(user=self.request.user)
+
+
+class BinanceGeneralActionsViewSet(viewsets.ViewSet):
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
+    lookup_field = 'slug'
+
+    @action(detail=False, methods=['get'])
+    def ping_binance(self, request, **kwargs):
+        try:
+            res = ExchangeActions().get_binance_ping()
+        except Exception as ex:
+            return Response({'error': str(ex)}, status=status.HTTP_400_BAD_REQUEST)
+        if res == {}:
+            return Response(data='ok', status=status.HTTP_200_OK)
+        else:
+            return Response({'error': 'error with no exception'},
+                            status=status.HTTP_400_BAD_REQUEST)
+
+    @action(detail=True, methods=['get'])
+    def account_status(self, request, **kwargs):
+        try:
+            user = get_object_or_404(User, slug=kwargs['slug'])
+            instance = ExchangeActions().get_account_status(user=user)
+            serializer = BinanceAccountStatusSerializer(instance)
+            return Response(serializer.data)
+        except Exception as ex:
+            return Response({'error': str(ex)}, status=status.HTTP_400_BAD_REQUEST)

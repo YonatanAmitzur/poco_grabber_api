@@ -1,11 +1,13 @@
-# import datetime
+from datetime import datetime
+from django.utils import timezone
 
 from django.test import TestCase
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 
 from poco_common.core.models import User, GrabberSettings, SymbolInfo, \
-    BinanceAccount, GrabberSettingsRecords, make_slug
+    BinanceAccount, GrabberSettingsRecords, SymbolEarliestTimestamp,\
+    CoinInfo, make_slug
 
 
 def sample_user(email='test@poco.com', password='testpass'):
@@ -673,3 +675,115 @@ class ModelTests(TestCase):
         self.assertEqual(slug, binance_account.slug)
         self.assertEqual(curr_user, binance_account.user)
         self.assertEqual(binance_account, accounts[0])
+
+    def test_create_symbol_earliest_timestamp(self):
+        curr_user = get_user_model().objects.create_user(
+            email='test@poco.com',
+            password='testpass',
+            name='test'
+        )
+        earliest_datetime = datetime(1970, 1, 1, tzinfo=timezone.utc)
+        symbol_earliest_timestamp = SymbolEarliestTimestamp.objects.create(
+            symbol='BTCUSDT',
+            earliest_datetime=earliest_datetime,
+            earliest_timestamp=earliest_datetime.timestamp(),
+            user=curr_user,
+            interval='1d'
+        )
+        symbol_earliest_list = SymbolEarliestTimestamp.objects.filter(user=curr_user)
+        res_symbol_earliest = symbol_earliest_list[0]
+        self.assertEqual(len(symbol_earliest_list), 1)
+        self.assertEqual(res_symbol_earliest.symbol, symbol_earliest_timestamp.symbol)
+        self.assertEqual(res_symbol_earliest.earliest_datetime, symbol_earliest_timestamp.earliest_datetime)
+        self.assertEqual(res_symbol_earliest.earliest_timestamp, symbol_earliest_timestamp.earliest_timestamp)
+        self.assertEqual(res_symbol_earliest.user, symbol_earliest_timestamp.user)
+        self.assertEqual(res_symbol_earliest.interval, symbol_earliest_timestamp.interval)
+        self.assertEqual(res_symbol_earliest.slug, symbol_earliest_timestamp.slug)
+        self.assertEqual(res_symbol_earliest.created, symbol_earliest_timestamp.created)
+        self.assertEqual(res_symbol_earliest.updated, symbol_earliest_timestamp.updated)
+        self.assertIsNotNone(res_symbol_earliest.created)
+        self.assertIsNotNone(res_symbol_earliest.updated)
+        self.assertIsNotNone(res_symbol_earliest.slug)
+        self.assertIsNotNone(res_symbol_earliest.interval)
+
+    def test_create_coin_info(self):
+        curr_user = get_user_model().objects.create_user(
+            email='test@poco.com',
+            password='testpass',
+            name='test'
+        )
+        coin_info = CoinInfo.objects.create(
+            user=curr_user,
+            coin= "BTC",
+            depositAllEnable=True,
+            withdrawAllEnable=True,
+            name="Bitcoin",
+            free=0,
+            locked=0,
+            freeze=0,
+            withdrawing=0,
+            ipoing=0,
+            ipoable=0,
+            storage=0,
+            isLegalMoney=False,
+            trading=True,
+            networkList=[
+                    {
+                        "network": "BNB",
+                        "coin": "BTC",
+                        "withdrawIntegerMultiple": "0.00000001",
+                        "isDefault": True,
+                        "depositEnable": True,
+                        "withdrawEnable": True,
+                        "depositDesc": "",
+                        "withdrawDesc": "",
+                        "specialTips": "Both a MEMO and an Address are required to successfully deposit your BEP2-BTCB tokens to Binance.",
+                        "name": "BEP2",
+                        "resetAddressStatus": False,
+                        "addressRegex": "^(bnb1)[0-9a-z]{38}$",
+                        "memoRegex": "^[0-9A-Za-z-_]{1,120}$",
+                        "withdrawFee": "0.0000026",
+                        "withdrawMin": "0.0000052",
+                        "withdrawMax": "0",
+                        "minConfirm": 1,
+                        "unLockConfirm": 0
+                    },
+                    {
+                        "network": "BTC",
+                        "coin": "BTC",
+                        "withdrawIntegerMultiple": "0.00000001",
+                        "isDefault": True,
+                        "depositEnable": True,
+                        "withdrawEnable": True,
+                        "depositDesc": "",
+                        "withdrawDesc": "",
+                        "specialTips": "",
+                        "name": "BTC",
+                        "resetAddressStatus": False,
+                        "addressRegex": "^[13][a-km-zA-HJ-NP-Z1-9]{25,34}$|^(bc1)[0-9A-Za-z]{39,59}$",
+                        "memoRegex": "",
+                        "withdrawFee": "0.0005",
+                        "withdrawMin": "0.001",
+                        "withdrawMax": "0",
+                        "minConfirm": 1,
+                        "unLockConfirm": 2
+                    }
+                ])
+        res_coin_infos = CoinInfo.objects.filter(user=curr_user)
+        self.assertEqual(len(res_coin_infos), 1)
+        res_coin_info = res_coin_infos[0]
+        self.assertEqual(res_coin_info.user, coin_info.user)
+        self.assertEqual(res_coin_info.coin, coin_info.coin)
+        self.assertEqual(res_coin_info.depositAllEnable, coin_info.depositAllEnable)
+        self.assertEqual(res_coin_info.withdrawAllEnable, coin_info.withdrawAllEnable)
+        self.assertEqual(res_coin_info.name, coin_info.name)
+        self.assertEqual(res_coin_info.free, coin_info.free)
+        self.assertEqual(res_coin_info.locked, coin_info.locked)
+        self.assertEqual(res_coin_info.freeze, coin_info.freeze)
+        self.assertEqual(res_coin_info.withdrawing, coin_info.withdrawing)
+        self.assertEqual(res_coin_info.ipoing, coin_info.ipoing)
+        self.assertEqual(res_coin_info.ipoable, coin_info.ipoable)
+        self.assertEqual(res_coin_info.storage, coin_info.storage)
+        self.assertEqual(res_coin_info.isLegalMoney, coin_info.isLegalMoney)
+        self.assertEqual(res_coin_info.trading, coin_info.trading)
+        self.assertEqual(res_coin_info.networkList, coin_info.networkList)

@@ -508,7 +508,6 @@ class Client(BaseClient):
         return None
 
     # General Endpoints
-
     def ping(self) -> Dict:
         """Test connectivity to the Rest API.
 
@@ -671,6 +670,7 @@ class Client(BaseClient):
         """
         return self._get('trades', data=params)
 
+    # TODO: create api end point
     def get_historical_trades(self, **params) -> Dict:
         """Get older trades.
 
@@ -825,6 +825,7 @@ class Client(BaseClient):
                 yield t
             last_id = trades[-1][self.AGG_ID]
 
+    # TODO: create mongo action
     def get_klines(self, **params) -> Dict:
         """Kline/candlestick bars for a symbol. Klines are uniquely identified by their open time.
 
@@ -909,6 +910,7 @@ class Client(BaseClient):
         )
         return kline[0][0]
 
+    # TODO: create mongo action
     def get_historical_klines(self, symbol, interval, start_str, end_str=None, limit=500,
                               klines_type: HistoricalKlinesType = HistoricalKlinesType.SPOT):
         """Get Historical Klines from Binance
@@ -1803,6 +1805,7 @@ class Client(BaseClient):
         """
         return self._get('order', True, data=params)
 
+    # TODO: create api end point
     def get_all_orders(self, **params):
         """Get all account orders; active, canceled, or filled.
 
@@ -1880,6 +1883,7 @@ class Client(BaseClient):
         """
         return self._delete('order', True, data=params)
 
+    # TODO: create api end point
     def get_open_orders(self, **params):
         """Get all open orders on a symbol.
 
@@ -1986,6 +1990,7 @@ class Client(BaseClient):
                     return bal
         return None
 
+    # TODO: create api end point
     def get_my_trades(self, **params):
         """Get trades for a specific symbol.
 
@@ -2236,6 +2241,7 @@ class Client(BaseClient):
         """
         return self._request_margin_api('get', 'asset/dribblet', True, data=params)
 
+    # TODO: create action api end point
     def transfer_dust(self, **params):
         """Convert dust assets to BNB.
 
@@ -2407,6 +2413,7 @@ class Client(BaseClient):
         """
         return self._request_margin_api('get', 'asset/transfer', signed=True, data=params)
 
+    # TODO: create api end point
     def get_trade_fee(self, **params):
         """Get trade fee.
 
@@ -2516,6 +2523,7 @@ class Client(BaseClient):
             params['name'] = params['coin']
         return self._request_margin_api('post', 'capital/withdraw/apply', True, data=params)
 
+    # TODO: create api end point
     def get_deposit_history(self, **params):
         """Fetch deposit history.
 
@@ -2572,6 +2580,7 @@ class Client(BaseClient):
         """
         return self._request_margin_api('get', 'capital/deposit/hisrec', True, data=params)
 
+    # TODO: create api end point
     def get_withdraw_history(self, **params):
         """Fetch withdraw history.
 
@@ -6350,6 +6359,7 @@ class Client(BaseClient):
         }
         return self._request_futures_coin_api('delete', 'listenKey', signed=False, data=params)
 
+    # TODO: create api end point===
     def get_all_coins_info(self, **params):
         """Get information of coins (available for deposit and withdraw) for user.
 
